@@ -1,16 +1,22 @@
 package com.lokalhy.newsreader.ui
 
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.navigation.fragment.findNavController
-import com.airbnb.mvrx.*
+import com.airbnb.mvrx.BaseMvRxFragment
+import com.airbnb.mvrx.activityViewModel
+import com.airbnb.mvrx.withState
 import com.lokalhy.newsreader.NewsVM
 import com.lokalhy.newsreader.R
 import com.squareup.picasso.Picasso
+import java.text.ParseException
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 class NewsDetailFragment : BaseMvRxFragment() {
@@ -38,7 +44,7 @@ class NewsDetailFragment : BaseMvRxFragment() {
                 tv_author.text = "By ${it.newsArticle.author}"
             }
 
-            tv_publishedAt.text = it.newsArticle.publishedAt
+            tv_publishedAt.text = convertTime(it.newsArticle.publishedAt)
         }
     }
 
@@ -65,6 +71,23 @@ class NewsDetailFragment : BaseMvRxFragment() {
         view.findViewById<ImageView>(R.id.iv_back).setOnClickListener {
             findNavController().navigateUp()
         }
+    }
+
+
+    fun convertTime(time:String): String {
+        val input = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
+        input.timeZone = TimeZone.getTimeZone("UTC")
+        val output = SimpleDateFormat("dd/MM/yyyy HH:mm")
+
+        var d: Date? = null
+        try {
+            d = input.parse(time)
+        } catch (e: ParseException) {
+            e.printStackTrace()
+        }
+        val formatted: String = output.format(d)
+        Log.i("DATE", "" + formatted)
+        return formatted
     }
 
 }

@@ -1,7 +1,9 @@
 package com.lokalhy.newsreader.ui
 
 
+import android.content.Context
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -17,6 +19,10 @@ import com.lokalhy.newsreader.R
 import com.lokalhy.newsreader.base.simpleController
 import com.lokalhy.newsreader.epoxyview.loadingView
 import com.lokalhy.newsreader.epoxyview.newsArticleView
+import dagger.android.support.AndroidSupportInjection
+import java.text.ParseException
+import java.text.SimpleDateFormat
+import java.util.*
 
 
 class MainFragment : BaseMvRxFragment() {
@@ -118,7 +124,7 @@ class MainFragment : BaseMvRxFragment() {
                         description(article.description)
                         source(article.source.name)
                         urlToImage(article.urlToImage)
-                        publishedAt(article.publishedAt)
+                        publishedAt(convertTime(article.publishedAt))
                         onClick {
                             newsVM.setNewsArticle(article)
                             findNavController().navigate(R.id.action_mainFragment_to_newsDetailFragment)
@@ -132,6 +138,22 @@ class MainFragment : BaseMvRxFragment() {
                 myUpdateOperation()
             }
         }
+    }
+
+    fun convertTime(time:String): String {
+        val input = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss'Z'")
+        input.timeZone = TimeZone.getTimeZone("UTC")
+        val output = SimpleDateFormat("dd/MM/YY HH:mm")
+
+        var d: Date? = null
+        try {
+            d = input.parse(time)
+        } catch (e: ParseException) {
+            e.printStackTrace()
+        }
+        val formatted: String = output.format(d)
+        Log.i("DATE", "" + formatted)
+        return "$formatted"
     }
 }
 
