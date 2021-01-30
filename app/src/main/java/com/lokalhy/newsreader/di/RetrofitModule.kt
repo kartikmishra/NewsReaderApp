@@ -4,7 +4,7 @@ import android.content.Context
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
 import android.util.Log
-import com.lokalhy.newsreader.NewsService
+import com.lokalhy.newsreader.retrofit.NewsService
 import dagger.Module
 import dagger.Provides
 import io.reactivex.schedulers.Schedulers
@@ -14,7 +14,6 @@ import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
 import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
-import retrofit2.converter.moshi.MoshiConverterFactory
 import java.io.IOException
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton

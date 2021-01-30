@@ -55,6 +55,7 @@ class NewsArticleView @JvmOverloads constructor(
             tvDesc.text = description
             Picasso.get().load(urlToImage).fit().into(ivArticle)
             tvSource.text = "By $source"
+            tvPublishedAt.text = publishedAt
         }
     }
 

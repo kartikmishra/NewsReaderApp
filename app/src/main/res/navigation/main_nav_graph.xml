@@ -7,7 +7,7 @@
 
     <fragment
         android:id="@+id/mainFragment"
-        android:name="com.lokalhy.newsreader.MainFragment"
+        android:name="com.lokalhy.newsreader.ui.MainFragment"
         android:label="fragment_main"
         tools:layout="@layout/fragment_main" >
         <action
@@ -16,7 +16,7 @@
     </fragment>
     <fragment
         android:id="@+id/newsDetailFragment"
-        android:name="com.lokalhy.newsreader.NewsDetailFragment"
+        android:name="com.lokalhy.newsreader.ui.NewsDetailFragment"
         android:label="fragment_news_detail"
         tools:layout="@layout/fragment_news_detail" />
 </navigation>
