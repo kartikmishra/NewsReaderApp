@@ -56,10 +56,12 @@ class MainFragment : BaseMvRxFragment() {
                 }
                 Uninitialized -> {}
                 is Success -> {
+                    swipeLayout.isRefreshing = false
                     mShimmerViewContainer.stopShimmer()
                     mShimmerViewContainer.visibility = View.GONE
                 }
                 is Fail -> {
+                    swipeLayout.isRefreshing = false
                     mShimmerViewContainer.stopShimmer()
                     mShimmerViewContainer.visibility = View.GONE
                 }
@@ -143,11 +145,9 @@ class MainFragment : BaseMvRxFragment() {
                         }
                     }
                 }
-                myUpdateOperation()
             }
 
             is Fail -> {
-                myUpdateOperation()
                 errorScreenView {
                     id("errorScreen")
                     onTryAgainClick {
