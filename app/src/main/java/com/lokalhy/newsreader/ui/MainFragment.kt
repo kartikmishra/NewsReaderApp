@@ -1,7 +1,6 @@
 package com.lokalhy.newsreader.ui
 
 
-import android.content.Context
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -13,13 +12,13 @@ import androidx.swiperefreshlayout.widget.SwipeRefreshLayout
 import com.airbnb.epoxy.EpoxyController
 import com.airbnb.epoxy.EpoxyRecyclerView
 import com.airbnb.mvrx.*
+import com.facebook.shimmer.ShimmerFrameLayout
 import com.lokalhy.newsreader.NewsState
 import com.lokalhy.newsreader.NewsVM
 import com.lokalhy.newsreader.R
 import com.lokalhy.newsreader.base.simpleController
-import com.lokalhy.newsreader.epoxyview.loadingView
+import com.lokalhy.newsreader.epoxyview.errorScreenView
 import com.lokalhy.newsreader.epoxyview.newsArticleView
-import dagger.android.support.AndroidSupportInjection
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
@@ -33,6 +32,7 @@ class MainFragment : BaseMvRxFragment() {
     private val newsArticleController: EpoxyController by lazy { buildController() }
 
     lateinit var  swipeLayout:SwipeRefreshLayout
+    lateinit var mShimmerViewContainer: ShimmerFrameLayout
 
 
 //    override fun onAttach(context: Context) {
@@ -49,6 +49,21 @@ class MainFragment : BaseMvRxFragment() {
     override fun invalidate() {
         withState(newsVM) { state ->
             newsArticleController.requestModelBuild()
+            when(state.newsData) {
+                is Loading -> {
+                    mShimmerViewContainer.startShimmer()
+                    mShimmerViewContainer.visibility = View.VISIBLE
+                }
+                Uninitialized -> {}
+                is Success -> {
+                    mShimmerViewContainer.stopShimmer()
+                    mShimmerViewContainer.visibility = View.GONE
+                }
+                is Fail -> {
+                    mShimmerViewContainer.stopShimmer()
+                    mShimmerViewContainer.visibility = View.GONE
+                }
+            }
         }
     }
 
@@ -65,6 +80,7 @@ class MainFragment : BaseMvRxFragment() {
         super.onViewCreated(view, savedInstanceState)
         val rv_epoxy = view.findViewById<EpoxyRecyclerView>(R.id.rv_epoxy)
         rv_epoxy.setController(newsArticleController)
+        mShimmerViewContainer = view.findViewById(R.id.shimmer_view_container);
 
         swipeLayout = view.findViewById<SwipeRefreshLayout>(R.id.swipeRefresh)
 
@@ -108,10 +124,6 @@ class MainFragment : BaseMvRxFragment() {
             }
 
             is Loading -> {
-                loadingView {
-                    id("loading view")
-                    message("Loading Articles...")
-                }
             }
 
             is Success -> {
@@ -136,8 +148,18 @@ class MainFragment : BaseMvRxFragment() {
 
             is Fail -> {
                 myUpdateOperation()
+                errorScreenView {
+                    id("errorScreen")
+                    onTryAgainClick {
+                        tryToRefetchData()
+                    }
+                }
             }
         }
+    }
+
+    private fun tryToRefetchData() {
+        newsVM.fetchTrendingNews()
     }
 
     fun convertTime(time:String): String {
